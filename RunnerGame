@@ -1,0 +1,145 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class RunnerGame extends JPanel implements ActionListener, KeyListener {
+
+    int playerX = 80;
+    int playerY = 230;
+    int velocityY = 0;
+
+    int obstacleX = 600;
+    int score = 0;
+
+    // 🐼 Panda animation
+    int bounce = 0;
+    boolean up = true;
+
+    Timer timer;
+
+    public RunnerGame() {
+        timer = new Timer(20, this);
+        timer.start();
+
+        addKeyListener(this);
+        setFocusable(true);
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // 🌤️ Sky
+        g.setColor(new Color(135, 206, 235));
+        g.fillRect(0, 0, 800, 400);
+
+        // ⛰️ Mountains
+        g.setColor(Color.GRAY);
+        int[] x1 = {100, 200, 300};
+        int[] y1 = {250, 100, 250};
+        g.fillPolygon(x1, y1, 3);
+
+        int[] x2 = {300, 400, 500};
+        int[] y2 = {250, 120, 250};
+        g.fillPolygon(x2, y2, 3);
+
+        // 🌳 Trees
+        g.setColor(new Color(139, 69, 19));
+        g.fillRect(550, 230, 10, 40);
+        g.setColor(Color.GREEN);
+        g.fillOval(530, 200, 50, 50);
+
+        g.setColor(new Color(139, 69, 19));
+        g.fillRect(650, 230, 10, 40);
+        g.setColor(Color.GREEN);
+        g.fillOval(630, 200, 50, 50);
+
+        // 🏠 House
+        g.setColor(Color.ORANGE);
+        g.fillRect(400, 230, 60, 50);
+        g.setColor(Color.RED);
+        int[] hx = {390, 430, 470};
+        int[] hy = {230, 190, 230};
+        g.fillPolygon(hx, hy, 3);
+
+        // 🌊 Water
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 260, 800, 40);
+
+        // 🟫 Ground
+        g.setColor(new Color(139, 69, 19));
+        g.fillRect(0, 300, 800, 100);
+
+        // 🐼 PANDA RUNNER
+        g.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 35));
+        g.drawString("🐼", playerX, playerY + 30 + bounce);
+
+        // 🟥 Obstacle
+        g.setColor(Color.RED);
+        g.fillRect(obstacleX, 240, 30, 60);
+
+        // 🎯 Score
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString("Score: " + score, 10, 20);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+
+        // Gravity
+        velocityY += 1;
+        playerY += velocityY;
+
+        if (playerY >= 230) {
+            playerY = 230;
+            velocityY = 0;
+        }
+
+        // Move obstacle
+        obstacleX -= 8;
+
+        if (obstacleX < -30) {
+            obstacleX = 800;
+            score++;
+        }
+
+        // 🐼 Bounce animation (fake running effect)
+        if (up) {
+            bounce--;
+            if (bounce < -5) up = false;
+        } else {
+            bounce++;
+            if (bounce > 5) up = true;
+        }
+
+        // Collision
+        if (playerX < obstacleX + 30 &&
+            playerX + 30 > obstacleX &&
+            playerY + 30 > 240) {
+
+            timer.stop();
+            JOptionPane.showMessageDialog(this, "Game Over! Score: " + score);
+        }
+
+        repaint();
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && playerY == 230) {
+            velocityY = -15;
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {}
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("🐼 Panda Runner Game");
+
+        RunnerGame game = new RunnerGame();
+        frame.add(game);
+
+        frame.setSize(800, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
