@@ -1,4 +1,4 @@
 # Practice
 First Repository .
-Author is Reshma
-i commit the changes on sir's guidence
+Author is Reshma .
+I commit the changes on sir's guidence
